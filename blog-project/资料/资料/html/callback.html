@@ -1,0 +1,102 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>激活</title>
+    <script src="../static/js/jquery-3.1.1.min.js"></script>
+</head>
+
+<div id="findpass">
+    <div class="query">请稍候。。。</div>
+    <div class="success" style="display: none">登录成功</div>
+    <div class="form_box" style="display: none">
+        <div>
+            <label for="uname">用户名：</label>
+            <input autocomplete required minlength="6" maxlength="9" type="text" placeholder="请输入用户名" autofocus name="uname"
+              id="uname" />
+        </div>
+        <div>
+            <label for="phone">手机号：</label>
+            <input id="phone" name="phone" placeholder="请输入您的手机号"required type="text" />
+        </div>
+        <div>
+            <label for="email">邮箱：</label>
+            <input autocomplete required type="email" placeholder="请输入邮箱地址" name="email" id="email" />
+        </div>
+        <div>
+            <label for="upwd">登录密码：</label>
+            <input required type="password" minlength="6" maxlength="12" placeholder="请输入密码" name="upwd" autofocus id="upwd" />
+        </div>
+        <p class="submit">提交</p >
+    </div>
+</div>
+</body>
+<script src="../static/js/jquery-3.1.1.min.js"></script>
+<script>
+    var uid = ""
+    var querystring = location.search
+    window.onload=function(){
+        $.ajax({
+                url: 'http://127.0.0.1:8000/v1/users/weibo/users'+querystring,
+                type: 'get',
+                dataType: "json",
+                success: function (res) {
+                    if (res.code == 200) {
+                        window.localStorage.clear();
+                        window.localStorage.setItem('dashop_token', res.token);
+                        window.localStorage.setItem('dashop_user', res.username);
+                        $('.query').css({display:"block"})
+                        $(".success").css({display:"none"})
+                        $('.form_box').css({display:"none"})
+                        setTimeout(()=>{
+                            window.location.href="success.html"
+                        },3000)
+                    }else if(res.code == 201){
+                        $('.query').css({display:"none"})
+                        $(".success").css({display:"none"})
+                        $('.form_box').css({display:"block"})
+                        // access_token = res.access_token
+                        uid = res.uid
+                    }else{
+                        alert(res.error)
+                    }
+                }
+            })
+    }
+        $(".submit").click (function(){
+        var uname = $("#uname").val()
+        var phone = $("#phone").val()
+        var password = $("#upwd").val()
+        var email = $("#email").val()
+            if(uname&&phone&&password&&email){
+                $.ajax({
+                url: 'http://127.0.0.1:8000/v1/users/weibo/users',
+                type: 'post',
+                data:JSON.stringify({uid,username:uname,password,phone,email}),
+                contentType:'application/json',
+                dataType: "json",
+                success: function (res) {
+                    if(res.code===200){
+                        window.localStorage.clear();
+                        window.localStorage.setItem('dashop_token', res.token);
+                        window.localStorage.setItem('dashop_user', res.username);
+                        $('.query').css({display:"block"})
+                        $(".success").css({display:"none"})
+                        $('.form_box').css({display:"none"})
+                        setTimeout(()=>{
+                            window.location.href="success.html"
+                        },3000)
+                    }else{
+                        alert(res.error)
+                    }
+                }
+            })
+            }else{
+                alert('信息请填写完整！！！')
+            }
+        })
+
+</script>
+</html>

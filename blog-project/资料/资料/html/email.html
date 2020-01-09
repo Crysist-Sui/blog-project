@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src='../static/js/jquery-3.1.1.min.js'></script>
+</head>
+<body>
+    <input type="text" placeholder='邮箱' id='email'>
+    
+    <input type="text" placeholder='验证码类型' id='code'>
+    <input class="button_login" type="button"placeholder='类型' value="登录" id="bt-login" />
+    <script>
+    
+    $('#bt-login').click(function (){
+        var email = $('#email').val()
+        var code = $('#code').val()
+        $.ajax({
+            url:'http://127.0.0.1:8000/v1/users/email',
+            dataType:'json',
+            contentType:'application/json',
+            method:'post',
+	    data:JSON.stringify({code,email}),
+            success: function(res){
+                if (res.code==200){
+                    alert(res.data)
+                }else{
+                    alert('error')
+                }
+            }
+        })
+
+
+    })
+    
+    </script>
+</body>
+
+</html>
